@@ -1,6 +1,8 @@
 <?php
 
-
+use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\OTPController;
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\BusController;
@@ -69,3 +71,7 @@ Route::post('/verify-otp-set-password', [AuthController::class, 'verifyOtpAndSet
 
 
 Route::post('/send-emergency-notification', [NotificationController::class, 'sendEmergencyNotification']);
+
+
+
+Route::post('/send-otp', [OTPController::class, 'sendOTP']);

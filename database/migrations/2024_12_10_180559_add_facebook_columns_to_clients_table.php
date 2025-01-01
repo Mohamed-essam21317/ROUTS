@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('clients', function (Blueprint $table) {
-            //
+            $table->string('facebook_id')->unique()->nullable();
+            $table->string('avatar')->nullable();
         });
     }
 

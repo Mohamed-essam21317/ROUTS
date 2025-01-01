@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,3 +18,10 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+// Route to redirect the user to Facebook login page
+Route::get('login/facebook', [LoginController::class, 'redirectToFacebook']);
+
+// Callback route that Facebook will redirect to
+Route::get('login/facebook/callback', [LoginController::class, 'handleFacebookCallback']);
