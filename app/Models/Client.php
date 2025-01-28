@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use  Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
@@ -12,13 +12,15 @@ class Client extends Model
     protected $table = 'clients';
 
     protected $fillable = [
+        'first_name',
+        'last_name',
         'role_based_id',
         'name',
         'email',
         'password',
         'role',
         'phone_number',
-        'national_id',
+
     ];
 
     // Relationship with Students - A parent can have many students

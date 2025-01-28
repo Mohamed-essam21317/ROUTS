@@ -1,45 +1,88 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Mail\OTPMail;
-use App\Helpers\OTPHelper;
+use App\Models\Otp;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\OTPMail;
 use Twilio\Rest\Client;
 
 class OTPController extends Controller
 {
-    public function sendOTP(Request $request): \Illuminate\Http\JsonResponse
+    // إرسال OTP
+    public function sendOtp(Request $request)
     {
-        $otp = OTPHelper::generateOTP();
+        $request->validate([
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string',
+        ]);
 
-        // Send OTP via email
-        if (isset($request->email)) {
+        if (!$request->email && !$request->phone) {
+            return response()->json(['message' => 'Please provide either email or phone'], 400);
+        }
+
+        $otp = rand(1000, 9999);
+
+        if ($request->email) {
             Mail::to($request->email)->send(new OTPMail($otp));
         }
 
-        // Send OTP via SMS (Twilio)
-        if (isset($request->phone)) {
-            $this->sendOTPBySMS($request->phone, $otp);
+        if ($request->phone) {
+            $this->sendSmsOTP($request->phone, $otp);
         }
+
+        Otp::create([
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'otp' => $otp,
+            'expires_at' => now()->addMinutes(5),
+        ]);
 
         return response()->json(['message' => 'OTP sent successfully']);
     }
 
-    private function sendOTPBySMS($phone, $otp)
+    // إرسال OTP عبر SMS باستخدام Twilio
+    private function sendSmsOTP($phoneNumber, $otp)
     {
-        $sid = env('TWILIO_SID');
-        $token = env('TWILIO_AUTH_TOKEN');
-        $twilio = new Client($sid, $token);
+        $twilioSid = env('TWILIO_SID');
+        $twilioAuthToken = env('TWILIO_AUTH_TOKEN');
+        $twilioPhoneNumber = env('TWILIO_PHONE_NUMBER');
 
-        $twilio->messages->create(
-            $phone,
+        $client = new Client($twilioSid, $twilioAuthToken);
+
+        $client->messages->create(
+            $phoneNumber,
             [
-                'from' => env('TWILIO_PHONE_NUMBER'),
-                'body' => "Your OTP code is: $otp"
+                'from' => $twilioPhoneNumber,
+                'body' => "Your OTP code is: $otp",
             ]
         );
     }
-}
 
+    // التحقق من OTP
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string',
+            'otp' => 'required|digits:4',
+        ]);
+
+        // البحث عن الكود في قاعدة البيانات
+        $otpRecord = Otp::where(function ($query) use ($request) {
+            $query->where('email', $request->email)
+                ->orWhere('phone', $request->phone);
+        })->where('otp', $request->otp)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (!$otpRecord) {
+            return response()->json(['message' => 'Invalid or expired OTP'], 400);
+        }
+
+        // حذف الكود بعد التحقق
+        $otpRecord->delete();
+
+        return response()->json(['message' => 'OTP verified successfully']);
+    }
+}

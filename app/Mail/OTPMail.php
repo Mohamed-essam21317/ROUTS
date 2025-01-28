@@ -1,13 +1,14 @@
 <?php
+// ملف app/Mail/OtpMail.php
+
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class OTPMail extends Mailable
+class OtpMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use SerializesModels;
 
     public $otp;
 
@@ -18,8 +19,8 @@ class OTPMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Your OTP Code')
-            ->view('emails.otp');
+        return $this->subject('Your OTP Code')->view('emails.otp');
     }
 }
+
 ?>

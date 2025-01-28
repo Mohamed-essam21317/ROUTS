@@ -13,6 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\FacebookAuthController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use App\Http\Controllers\NotificationController;
+use Laravel\Sanctum\Sanctum;
 // Students Routes
 Route::get('students', [StudentController::class, 'index']); // List all students
 Route::get('students/{id}', [StudentController::class, 'show']); // Get a specific student
@@ -34,7 +35,9 @@ Route::get('buses/{id}', [BusController::class, 'show']); // Get a specific bus
 Route::post('buses', [BusController::class, 'store']); // Create a new bus
 Route::put('buses/{id}', [BusController::class, 'update']); // Update a bus
 Route::delete('buses/{id}', [BusController::class, 'destroy']); // Delete a bus
-Route::put('buses/{id}/location', [BusController::class, 'updateLocation']); // Update a bus's location
+// Route::put('buses/{id}/location', [BusController::class, 'updateLocation']); // Update a bus's location
+Route::post('/bus/location/update', [BusController::class, 'updateLocation']);
+
 
 // Routes for Bus Routes
 Route::get('routes', [RouteController::class, 'index']); // List all routes
@@ -46,13 +49,23 @@ Route::delete('routes/{id}', [RouteController::class, 'destroy']); // Delete a r
 // Geofencing Routes
 Route::post('geofencing/student/{id}/check', [GeofencingController::class, 'checkStudentGeofence']); // Check student geofence
 Route::post('geofencing/bus/{id}/check', [GeofencingController::class, 'checkBusGeofence']); // Check bus geofence
- // facebook routes
+// facebook routes
 Route::post('/auth/facebook-login', [SocialAuthController::class, 'facebookLogin']);
 Route::get('/auth/facebook-callback', [SocialAuthController::class, 'handleCallback']);
 Route::post('/auth/facebook-login', [FacebookAuthController::class, 'facebookLogin']);
 
 // login
-Route::post('/login', [AuthController::class, 'login']);
+//Route::post('/login', [AuthController::class, 'login']);
+//  الـ login
+Route::post('login', [AuthController::class, 'login']);
+// رابط الـ logout (يتطلب توكين صالح)
+Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
+// register
+Route::post('register', [AuthController::class, 'register']);
+
+
+//Sanctum::usePersonalAccessTokenModel(\App\Models\PersonalAccessToken::class);
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -64,9 +77,15 @@ Route::post('/google-login', [GoogleAuthController::class, 'googleLogin']);
 
 //set password
 
+Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
+Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
-Route::post('/send-otp', [AuthController::class, 'sendOtp']);
-Route::post('/verify-otp-set-password', [AuthController::class, 'verifyOtpAndSetPassword']);
+//Route::post('/send-otp', [AuthController::class, 'sendOtp']);
+//Route::post('/verify-otp-set-password', [AuthController::class, 'verifyOtpAndSetPassword']);
+
+//Route::post('/send-otp', [OTPController::class, 'sendOtp']);
+//Route::post('/verify-otp', [OTPController::class, 'verifyOtp']);
 
 
 
@@ -74,4 +93,4 @@ Route::post('/send-emergency-notification', [NotificationController::class, 'sen
 
 
 
-Route::post('/send-otp', [OTPController::class, 'sendOTP']);
+//Route::post('/send-otp', [OTPController::class, 'sendOTP']);

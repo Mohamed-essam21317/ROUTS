@@ -64,16 +64,42 @@ class BusController extends Controller
     }
 
     // Update the location of a bus
-    public function updateLocation(Request $request, $id)
+    // public function updateLocation(Request $request, $id)
+    // {
+    //     $validated = $request->validate([
+    //         'latitude' => 'required|numeric',
+    //         'longitude' => 'required|numeric',
+    //     ]);
+
+    //     $bus = Bus::findOrFail($id);
+    //     $bus->updateLocation($validated['latitude'], $validated['longitude']);
+
+    //     return response()->json(['message' => 'Bus location updated successfully.']);
+    // }
+
+    public function updateLocation(Request $request)
     {
         $validated = $request->validate([
+            'bus_id' => 'required|exists:buses,id',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
         ]);
 
-        $bus = Bus::findOrFail($id);
-        $bus->updateLocation($validated['latitude'], $validated['longitude']);
+        // Update the bus location
+        $bus = \App\Models\Bus::find($validated['bus_id']);
+        $bus->location = json_encode([
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+        ]);
+        $bus->save();
 
-        return response()->json(['message' => 'Bus location updated successfully.']);
+        // Broadcast the location update
+        event(new \App\Events\BusLocationUpdated(
+            $bus->id,
+            $validated['latitude'],
+            $validated['longitude']
+        ));
+
+        return response()->json(['message' => 'Bus location updated successfully']);
     }
 }
