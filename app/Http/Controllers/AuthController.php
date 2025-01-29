@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OtpMail;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,6 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-       // dd($request->all());
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
@@ -30,8 +30,11 @@ class AuthController extends Controller
             ]);
         }
 
+
+
         return response()->json(['error' => 'Unauthorized'], 401);
     }
+
 
     //  تسجيل الخروج
     public function logout(Request $request)
@@ -51,7 +54,9 @@ class AuthController extends Controller
             'date_of_birth' => 'nullable|date|before:today',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'phone' => 'required|numeric|unique:users,phone', // إضافة رقم الهاتف
+            //'phone_number' => 'required|numeric|unique:users,phone', // إضافة رقم الهاتف
+            'phone' => 'required|numeric|unique:users,phone', // تغيير من 'phone_number' إلى 'phone'
+            //'name' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -62,6 +67,7 @@ class AuthController extends Controller
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
+            'name' => $request->first_name . ' ' . $request->last_name,
             'date_of_birth' => $request->date_of_birth,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -99,37 +105,54 @@ class AuthController extends Controller
     // دالة إرسال OTP
     public function forgotPassword(Request $request)
     {
+        // التحقق من صحة البيانات المدخلة
         $request->validate([
             'email' => 'required|email|exists:users,email',
-            'phone' => 'required|numeric|exists:users,phone',
+            'phone' => ['required', 'numeric', 'digits:11', 'regex:/^01[0-9]{9}$/'],
         ]);
 
+        // التحقق من وجود المستخدم
         $user = User::where('email', $request->email)
             ->where('phone', $request->phone)
             ->first();
 
         if ($user) {
-            // تحقق من الطلبات المتكررة
+            // التحقق من الـ OTP Expiry
+            dd($user->otp_expiry);
             if ($user->otp_expiry && now()->diffInSeconds($user->otp_expiry) < 60) {
                 return response()->json(['error' => 'Please wait before requesting another OTP.'], 429);
             }
 
+            // توليد OTP جديد
             $otp = rand(1000, 9999);
 
             // تخزين OTP مشفر
             $user->otp = Hash::make($otp);
-            $user->otp_expiry = now()->addMinutes(10);
+            $user->otp_expiry = now()->addMinutes(1); // تعيين وقت انتهاء صلاحية OTP
             $user->save();
 
-            // إرسال OTP
-            Mail::to($user->email)->send(new OtpMail($otp));
-            $this->sendSms($user->phone, "Your OTP is: $otp");
+            // إرسال OTP عبر البريد الإلكتروني
+            try {
+                Mail::to($user->email)->send(new OtpMail($otp));
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Failed to send email: ' . $e->getMessage()], 500);
+            }
+
+            // إرسال OTP عبر الرسائل النصية
+            try {
+                $this->sendSms($user->phone, "Your OTP is: $otp");
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Failed to send SMS: ' . $e->getMessage()], 500);
+            }
 
             return response()->json(['message' => 'OTP sent to your email and phone.']);
         }
 
+        // في حالة عدم العثور على المستخدم
         return response()->json(['error' => 'User not found.'], 404);
     }
+
+    // دالة إرسال الـ SMS ( تخزين OTP مشفر
 
     // دالة التحقق من OTP
     public function verifyOtp(Request $request)

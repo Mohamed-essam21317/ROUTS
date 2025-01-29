@@ -7,21 +7,24 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
 
-    public function up(): void
+    public function up()
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('phone')->default(''); // إضافة الحقل phone مع الفاصلة المنقوطة
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('facebook_id')->nullable(); // Add directly here
-            $table->string('facebook_token')->nullable(); // Add directly here
+            $table->string('facebook_id')->nullable();
+            $table->string('facebook_token')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
+
+
+Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();

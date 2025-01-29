@@ -19,7 +19,7 @@ $table->string('role_based_id')->nullable();
 }
 if (!Schema::hasColumn('users', 'role')) {
 $table->string('role')->nullable();
-}
+} 
 if (!Schema::hasColumn('users', 'phone_number')) {
 $table->string('phone_number')->nullable();
 }
