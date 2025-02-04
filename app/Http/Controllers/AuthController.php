@@ -31,7 +31,6 @@ class AuthController extends Controller
         }
 
 
-
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
@@ -118,7 +117,6 @@ class AuthController extends Controller
 
         if ($user) {
             // التحقق من الـ OTP Expiry
-            dd($user->otp_expiry);
             if ($user->otp_expiry && now()->diffInSeconds($user->otp_expiry) < 60) {
                 return response()->json(['error' => 'Please wait before requesting another OTP.'], 429);
             }
@@ -138,23 +136,14 @@ class AuthController extends Controller
                 return response()->json(['error' => 'Failed to send email: ' . $e->getMessage()], 500);
             }
 
-            // إرسال OTP عبر الرسائل النصية
-            try {
-                $this->sendSms($user->phone, "Your OTP is: $otp");
-            } catch (\Exception $e) {
-                return response()->json(['error' => 'Failed to send SMS: ' . $e->getMessage()], 500);
-            }
-
-            return response()->json(['message' => 'OTP sent to your email and phone.']);
+            return response()->json(['message' => 'OTP sent to your email.']);
         }
 
         // في حالة عدم العثور على المستخدم
         return response()->json(['error' => 'User not found.'], 404);
     }
 
-    // دالة إرسال الـ SMS ( تخزين OTP مشفر
-
-    // دالة التحقق من OTP
+// دالة التحقق من OTP
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -175,7 +164,7 @@ class AuthController extends Controller
         return response()->json(['error' => 'Invalid or expired OTP.'], 400);
     }
 
-    // دالة إعادة تعيين كلمة المرور
+// دالة إعادة تعيين كلمة المرور
     public function resetPassword(Request $request)
     {
         $request->validate([

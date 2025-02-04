@@ -1,7 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\BusController;
 use App\Http\Controllers\RouteController;
@@ -9,8 +8,9 @@ use App\Http\Controllers\GeofencingController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\NotificationController;
-
-// Authentication Routes
+use App\Http\Controllers\Api\ChildController;
+use App\Http\Controllers\SMSController;// Authentication Routes
+use App\Http\Controllers\StudentController;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
@@ -48,3 +48,13 @@ Route::post('/google-login', [GoogleAuthController::class, 'googleLogin']);
 
 // Notification Routes
 Route::post('/send-emergency-notification', [NotificationController::class, 'sendEmergencyNotification']);
+
+
+Route::post('/children', [ChildController::class, 'store']);
+Route::get('/children', [ChildController::class, 'index']);
+//Route::get('/children/{id}', [ChildController::class, 'show']);
+
+
+Route::post('/send-sms', [SMSController::class, 'sendSMS']);
+
+Route::get('student-details', [StudentController::class, 'getStudentDetails']);

@@ -9,41 +9,23 @@ class Student extends Model
 {
     use HasFactory;
 
-    protected $table = 'students';
-
-    protected $primaryKey = 'id'; // School-provided IDs
-
+    // إضافة الأعمدة الجديدة إلى الـ fillable
     protected $fillable = [
-        'id',
         'name',
+        'school_id',
         'age',
         'parent_id',
-        'bus_id',
-        'health_info',
-        'attendance_status',
+        'academic_year',   // السنة الدراسية
+        'access_point',    // نقطة الوصول
     ];
 
-    // Relationship with Parent (Client) - A student belongs to one parent
-    public function parent()
+    // إضافة العلاقة مع مدرسة (إذا كنت عامل علاقة BelongsTo)
+    public function school()
     {
-        return $this->belongsTo(Client::class, 'parent_id', 'id');
+        return $this->belongsTo(School::class);
     }
-
-    // Relationship with Bus - A student belongs to one bus
-    public function bus()
+    public function child()
     {
-        return $this->belongsTo(Bus::class, 'bus_id', 'id');
-    }
-
-    // Relationship with Geofencing - A student has one geofencing record
-    public function geofencing()
-    {
-        return $this->hasOne(Geofencing::class, 'student_id', 'id');
-    }
-
-    // Check if a student is inside their geofence
-    public function isInsideGeofence($latitude, $longitude)
-    {
-        return $this->geofencing && $this->geofencing->isInsideGeofence($latitude, $longitude);
+        return $this->hasOne(Child::class);
     }
 }

@@ -37,8 +37,8 @@ return [
 // في ملف
     'twilio' => [
         'sid' => env('TWILIO_SID'),
-        'auth_token' => env('TWILIO_AUTH_TOKEN'),
-        'phone_number' => env('TWILIO_PHONE_NUMBER'),
+        'token' => env('TWILIO_AUTH_TOKEN'),  // تأكد أن المفتاح هنا اسمه token وليس auth_token
+        'from' => env('TWILIO_PHONE_NUMBER'),
     ],
 
 
