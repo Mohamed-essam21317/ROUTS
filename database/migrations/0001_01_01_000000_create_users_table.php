@@ -6,14 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('phone')->default(''); // إضافة الحقل phone مع الفاصلة المنقوطة
+            $table->string('phone')->nullable();  // ج
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('facebook_id')->nullable();
@@ -22,9 +21,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-
-
-Schema::create('password_reset_tokens', function (Blueprint $table) {
+        Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
@@ -37,6 +34,8 @@ Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

@@ -11,14 +11,14 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('otp_expiry')->nullable(); // إضافة عمود otp_expiry
+            $table->timestamp('otp_expiry')->nullable(); 
         });
     }
 
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('otp_expiry'); // إلغاء العمود لو عملنا rollback
+            $table->dropColumn('otp_expiry'); 
         });
     }
 };

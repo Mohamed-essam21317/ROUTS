@@ -9,7 +9,7 @@ use Twilio\Rest\Client;
 
 class OTPController extends Controller
 {
-    // إرسال OTP
+    
     public function sendOtp(Request $request)
     {
         $request->validate([
@@ -41,7 +41,7 @@ class OTPController extends Controller
         return response()->json(['message' => 'OTP sent successfully']);
     }
 
-    // إرسال OTP عبر SMS باستخدام Twilio
+    
     private function sendSmsOTP($phoneNumber, $otp)
     {
         $twilioSid = env('TWILIO_SID');
@@ -59,7 +59,7 @@ class OTPController extends Controller
         );
     }
 
-    // التحقق من OTP
+  
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -68,7 +68,7 @@ class OTPController extends Controller
             'otp' => 'required|digits:4',
         ]);
 
-        // البحث عن الكود في قاعدة البيانات
+       
         $otpRecord = Otp::where(function ($query) use ($request) {
             $query->where('email', $request->email)
                 ->orWhere('phone', $request->phone);
@@ -80,7 +80,7 @@ class OTPController extends Controller
             return response()->json(['message' => 'Invalid or expired OTP'], 400);
         }
 
-        // حذف الكود بعد التحقق
+        
         $otpRecord->delete();
 
         return response()->json(['message' => 'OTP verified successfully']);

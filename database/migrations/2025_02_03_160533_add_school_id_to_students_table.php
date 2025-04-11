@@ -8,16 +8,16 @@ class AddSchoolIdToStudentsTable extends Migration
     public function up()
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->unsignedBigInteger('school_id'); // هنا بنضيف العمود
-            $table->foreign('school_id')->references('id')->on('schools')->onDelete('cascade'); // بنحدد العلاقة مع جدول schools
+            $table->unsignedBigInteger('school_id'); 
+            $table->foreign('school_id')->references('id')->on('schools')->onDelete('cascade'); 
         });
     }
 
     public function down()
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->dropForeign(['school_id']); // حذف العلاقة
-            $table->dropColumn('school_id'); // حذف العمود
+            $table->dropForeign(['school_id']);
+            $table->dropColumn('school_id'); 
         });
     }
 

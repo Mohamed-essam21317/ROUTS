@@ -34,12 +34,17 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-// في ملف
+
     'twilio' => [
         'sid' => env('TWILIO_SID'),
-        'token' => env('TWILIO_AUTH_TOKEN'),  // تأكد أن المفتاح هنا اسمه token وليس auth_token
+        'token' => env('TWILIO_AUTH_TOKEN'),  
         'from' => env('TWILIO_PHONE_NUMBER'),
     ],
 
+  'firebase' => [
+    'credentials' => storage_path('app/firebase/serviceAccount.json'),
+],
+
 
 ];
+

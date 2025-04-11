@@ -9,17 +9,19 @@ class Student extends Model
 {
     use HasFactory;
 
-    // إضافة الأعمدة الجديدة إلى الـ fillable
+    
     protected $fillable = [
         'name',
         'school_id',
         'age',
         'parent_id',
-        'academic_year',   // السنة الدراسية
-        'access_point',    // نقطة الوصول
+        ' grade',   
+        'address',    
     ];
+  
 
-    // إضافة العلاقة مع مدرسة (إذا كنت عامل علاقة BelongsTo)
+
+    
     public function school()
     {
         return $this->belongsTo(School::class);

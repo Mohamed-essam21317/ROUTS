@@ -14,10 +14,14 @@ return new class extends Migration
         Schema::create('children', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('school_id')->constrained('schools')->onDelete('cascade');
-            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
-            $table->foreignId('parent_id')->constrained('users')->onDelete('cascade'); // افتراضًا أن أولياء الأمور مخزنين في جدول users
+            $table->unsignedBigInteger('school_id');  
+            $table->unsignedBigInteger('student_id'); 
+            $table->unsignedBigInteger('parent_id');  
             $table->timestamps();
+        
+            $table->foreign('school_id')->references('id')->on('schools')->onDelete('cascade');
+            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

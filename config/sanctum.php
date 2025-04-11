@@ -3,17 +3,37 @@
 use Laravel\Sanctum\Sanctum;
 
 return [
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        Sanctum::currentApplicationUrlWithPort()
-    ))),
+    /*
+    |--------------------------------------------------------------------------
+    | Stateful Domains
+    |--------------------------------------------------------------------------
+    |
+    | هذه المجالات يجب أن يتم التعامل معها كـ stateful لتمكين المصادقة باستخدام 
+    | الكوكيز والـ CSRF لحماية الأمان.
+    |
+    */
 
-    'guard' => ['api'],  // تأكد من استخدام 'api' وليس 'web' هنا
+   'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost,127.0.0.1')),
 
-    'expiration' => null,
 
-    'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
+
+
+    'guard' => ['web', 'api'],
+
+
+
+    'expiration' => env('SANCTUM_TOKEN_EXPIRATION', null),
+
+    
+
+    'token_prefix' => env('SANCTUM_TOKEN_PREFIX', 'sanctum_'),
+
+
+
+
+
+
+    
 
     'middleware' => [
         'authenticate_session' => Laravel\Sanctum\Http\Middleware\AuthenticateSession::class,

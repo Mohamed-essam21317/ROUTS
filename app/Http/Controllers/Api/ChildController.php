@@ -15,13 +15,13 @@ class ChildController extends Controller
             'student_id' => 'required|exists:students,id',
         ]);
 
-        // التحقق من أن الطالب غير مرتبط بطفل آخر
+
         $existingChild = Child::where('student_id', $request->student_id)->first();
         if ($existingChild) {
             return response()->json(['error' => 'This student is already assigned to a child.'], 400);
         }
 
-        // إنشاء الطفل
+
         $child = Child::create([
             'name' => $request->name,
             'school_id' => $request->school_id,
@@ -33,7 +33,7 @@ class ChildController extends Controller
     }
     public function index()
     {
-        // جلب الأطفال المرتبطين بولي الأمر الحالي
+        
         $children = Child::with('school') // جلب اسم المدرسة
         ->where('parent_id', auth()->id())
             ->get();
