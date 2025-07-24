@@ -2,47 +2,43 @@
 
 namespace App\Services;
 
+use App\Models\BusLocation;  // Import the BusLocation model
 use Kreait\Firebase\Factory;
-use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification as FirebaseNotification;
-use Kreait\Firebase\Contract\Messaging;
-use Kreait\Firebase\Exception\MessagingException;
-use Kreait\Firebase\Exception\FirebaseException;
 
 class FirebaseService
 {
-    protected $messaging;
+    protected $database;
 
     public function __construct()
     {
-     
-        $serviceAccountPath = storage_path('app/firebase/serviceAccount.json');
+        $serviceAccountPath = storage_path('app/firebase/firebase_credentials.json');
+        $databaseUri = 'https://routuss-default-rtdb.firebaseio.com'; 
 
-        $this->messaging = (new Factory)
-    ->withServiceAccount(storage_path('app/firebase/serviceAccount.json'))
-    ->createMessaging();
-
+        $this->database = (new Factory)
+            ->withServiceAccount($serviceAccountPath)
+            ->withDatabaseUri($databaseUri)
+            ->createDatabase();
     }
 
-    public function sendNotification($deviceToken, $title, $body, $data = [])
+    // Function to get bus location from Firebase
+    public function getBusLocation($busId)
     {
-        if (!$deviceToken) {
-            return ['error' => 'Device token is required'];
-        }
+        // Reference to the bus location in Firebase Realtime Database
+        $busRef = $this->database->getReference('tracker');
+        $busData = $busRef->getValue();
 
-        try {
-            $notification = FirebaseNotification::create()
-                ->withTitle($title)
-                ->withBody($body);
+        return $busData;
+    }
 
-            $message = CloudMessage::withTarget('token', $deviceToken)
-                ->withNotification($notification)
-                ->withData($data);
-
-            return $this->messaging->send($message);
-        } catch (MessagingException | FirebaseException $e) {
-            return ['error' => 'Failed to send notification', 'message' => $e->getMessage()];
-        }
+    // Function to store bus location in MySQL database
+    public function storeBusLocationInDB($busId, $latitude, $longitude)
+    {
+        // Create a new bus location entry
+        BusLocation::create([
+            'bus_id' => $busId,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'location_timestamp' => now(), // Add this line
+        ]);
     }
 }
-

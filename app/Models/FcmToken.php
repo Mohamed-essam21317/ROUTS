@@ -10,11 +10,11 @@ class FcmToken extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',  
+        'user_id',
         'fcm_token'
     ];
 
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);

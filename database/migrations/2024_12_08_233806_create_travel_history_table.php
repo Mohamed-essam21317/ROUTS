@@ -10,7 +10,8 @@ class CreateTravelHistoryTable extends Migration
     {
         Schema::create('travel_history', function (Blueprint $table) {
             $table->id();
-            $table->string('student_id'); // Referencing school-provided student ID
+            // Modify the student_id column to ensure it's BIGINT UNSIGNED
+            $table->bigInteger('student_id')->unsigned(); // Ensure it's BIGINT UNSIGNED
             $table->unsignedBigInteger('bus_id');
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
             $table->foreign('bus_id')->references('id')->on('buses')->onDelete('cascade');

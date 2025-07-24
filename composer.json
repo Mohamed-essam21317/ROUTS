@@ -1,5 +1,4 @@
 {
-    "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
@@ -8,16 +7,26 @@
     "require": {
         "php": "^8.2",
         "google/apiclient": "^2.18",
+        "google/auth": "^1.47",
         "guzzlehttp/guzzle": "^7.9",
-        "kreait/firebase-php": "*",
+        "guzzlehttp/psr7": "^2.6",
+        "kreait/firebase-php": "^6.9",
         "laravel/framework": "^11.31",
-        "laravel/sanctum": "*",
+        "laravel/sanctum": "^4.1",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.6",
+        "monolog/monolog": "^3.0",
+        "pestphp/pest": "^3.6",
+        "psr/http-message": "^1.1",
         "twilio/sdk": "^8.3",
         "tymon/jwt-auth": "^2.1",
         "vonage/client": "^4.1"
     },
+
+
+
+
+
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "laravel/breeze": "^2.2",

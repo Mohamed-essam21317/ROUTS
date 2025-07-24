@@ -37,12 +37,12 @@ return [
 
     'twilio' => [
         'sid' => env('TWILIO_SID'),
-        'token' => env('TWILIO_AUTH_TOKEN'),  
+        'token' => env('TWILIO_AUTH_TOKEN'),
         'from' => env('TWILIO_PHONE_NUMBER'),
     ],
 
   'firebase' => [
-    'credentials' => storage_path('app/firebase/serviceAccount.json'),
+    'credentials' => storage_path('app/firebase/firebase_credentials.json'),
 ],
 
 

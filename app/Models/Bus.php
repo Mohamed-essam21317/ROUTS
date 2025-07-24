@@ -40,11 +40,9 @@ class Bus extends Model
     }
 
     // Update the bus's current location
-    public function updateLocation($latitude, $longitude)
+
+    public function location()
     {
-        $this->update([
-            'current_latitude' => $latitude,
-            'current_longitude' => $longitude,
-        ]);
+        return $this->hasOne(BusLocation::class, 'bus_id');
     }
 }

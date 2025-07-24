@@ -8,10 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+
 
 
     protected $fillable = [
@@ -23,9 +25,11 @@ class User extends Authenticatable
         'password',
         'role',
         'phone',
+        'school_id',
+        'card_token',
     ];
 
-    
+
     protected $hidden = [
         'password',
         'remember_token',
@@ -41,15 +45,19 @@ class User extends Authenticatable
         return $this->hasOne(ParentProfile::class);
     }
 
-    
+
     public function fcmToken(): HasOne
     {
         return $this->hasOne(FcmToken::class);
     }
 
- 
+
     public function routeNotificationForFcm()
     {
         return $this->fcmToken ? $this->fcmToken->fcm_token : null;
+    }
+    public function transactions()
+    {
+        return $this->hasMany(\App\Models\Transaction::class);
     }
 }

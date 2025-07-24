@@ -10,7 +10,8 @@ class CreateAttendanceTable extends Migration
     {
         Schema::create('attendance', function (Blueprint $table) {
             $table->id();
-            $table->string('student_id'); // Foreign key referencing students.id
+            // Modify the student_id column to be compatible with students.id
+            $table->bigInteger('student_id')->unsigned(); // Ensure it's BIGINT UNSIGNED
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
             $table->date('date');
             $table->time('check_in_time')->nullable();

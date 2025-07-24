@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ParentProfile;
-use App\Models\User; 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ParentProfileController extends Controller
@@ -69,21 +69,24 @@ class ParentProfileController extends Controller
     public function destroy(Request $request)
     {
         // تحديد المستخدم يدويًا من التوكن
-        auth()->setUser(\Laravel\Sanctum\PersonalAccessToken::findToken($request->bearerToken())?->tokenable);
-    
-        $user = auth()->user();
-    
+        $user = \Laravel\Sanctum\PersonalAccessToken::findToken($request->bearerToken())?->tokenable;
+        if ($user) {
+            Auth::login($user);
+        }
+
+        $user = Auth::user();
+
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-    
+
         if ($user->parentProfile) {
             $user->parentProfile->delete();
         }
-    
-        $user->currentAccessToken()?->delete();
-        $user->delete();
-    
+
+        // $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
+        // $user->delete();
+
         return response()->json(['message' => 'Parent account deleted successfully']);
     }
-}    
+}

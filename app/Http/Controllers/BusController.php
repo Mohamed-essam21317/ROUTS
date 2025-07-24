@@ -86,7 +86,7 @@ class BusController extends Controller
         ]);
 
         // Update the bus location
-        $bus = \App\Models\Bus::find($validated['bus_id']);
+        $bus = Bus::find($validated['bus_id']);
         $bus->location = json_encode([
             'latitude' => $validated['latitude'],
             'longitude' => $validated['longitude'],
