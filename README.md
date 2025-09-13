@@ -130,10 +130,9 @@ npm run dev
 - DELETE /api/geofences/{id} - Delete geofence
 
 ### Payments
-- POST /api/payments/initiate - Initiate payment
-- POST /api/payments/callback - Handle payment callback
-- GET /api/payments/{id} - Get payment status
-- POST /api/payments/refund - Process refund
+- POST /api/pay - Process payment with Paymob
+- POST /api/pay/charge-saved-card - Charge a saved card
+- POST /api/paymob/webhook - Handle Paymob webhook notifications
 
 ## Project Structure
 
@@ -143,10 +142,6 @@ npm run dev
 - routes/ - Web and API routes
 - public/ - Publicly accessible files
 - config/ - Configuration files including Paymob settings
-
-## Screenshots
-
-[Add screenshots of your application here]
 
 ## Testing
 
